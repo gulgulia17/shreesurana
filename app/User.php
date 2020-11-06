@@ -2,13 +2,15 @@
 
 namespace App;
 
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'username', 'number', 'api_token', 'type',
     ];
 
     /**
@@ -36,4 +38,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function findById($id)
+    {
+        return parent::findorFail($id);
+    }
+
+    public static function findByNumber($number)
+    {
+        return parent::where('number', $number);
+    }
+
+    public function setUsernameAttribute($value)
+    {
+        $name = substr($this->attributes['name'], 0, 3);
+        $number = substr($this->attributes['number'], 0, 4);
+
+        $username = $name . $number;
+        $i = 0;
+        while (User::whereUsername($username)->exists()) {
+            $i++;
+            $username = $name . $number . $i;
+        }
+
+        $this->attributes['username'] = $username;
+    }
 }

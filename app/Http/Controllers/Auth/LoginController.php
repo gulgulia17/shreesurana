@@ -37,4 +37,25 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    public function username()
+    {
+        request()
+            ->merge([
+                $this->checkField(request()->input('username')) => request()->input('username')
+            ]);
+
+        return $this->checkField(request()->input('username'));
+    }
+
+    public function checkField($data)
+    {
+        if (is_numeric($data)) {
+            return 'number';
+        } elseif (filter_var($data, FILTER_VALIDATE_EMAIL)) {
+            return 'email';
+        } else {
+            return 'username';
+        }
+    }
 }
