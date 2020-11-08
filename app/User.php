@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use Notifiable, HasRoles, SoftDeletes;
+    use Notifiable, HasRoles, HasMediaTrait, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -49,18 +51,8 @@ class User extends Authenticatable
         return parent::where('number', $number);
     }
 
-    public function setUsernameAttribute($value)
+    public function files()
     {
-        $name = substr($this->attributes['name'], 0, 3);
-        $number = substr($this->attributes['number'], 0, 4);
-
-        $username = $name . $number;
-        $i = 0;
-        while (User::whereUsername($username)->exists()) {
-            $i++;
-            $username = $name . $number . $i;
-        }
-
-        $this->attributes['username'] = $username;
+        return $this->belongsToMany(Models\File::class);
     }
 }

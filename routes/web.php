@@ -17,3 +17,4 @@ Route::group(['middleware' => ['auth', 'IfAllowed']], function () {
     Route::GET('profile/user', 'Admin\UserController@profile')->name('profile.index');
     Route::POST('profile/user', 'Admin\UserController@profileStore')->name('profile.store');
 });
+Route::resource('files', 'Admin\FilesController');
