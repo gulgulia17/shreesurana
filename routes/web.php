@@ -17,4 +17,11 @@ Route::group(['middleware' => ['auth', 'IfAllowed']], function () {
     Route::GET('profile/user', 'Admin\UserController@profile')->name('profile.index');
     Route::POST('profile/user', 'Admin\UserController@profileStore')->name('profile.store');
 });
+Route::get('leads','LeadsController@index')->name('leads.index');
+Route::get('files/datatables','FilesController@getFiles')->name('files.get.data');
+Route::match(
+    ['get','post'],
+    'files/{files}/attach',
+    'Admin\FilesController@attach'
+)->name('files.attach');
 Route::resource('files', 'Admin\FilesController');

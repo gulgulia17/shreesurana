@@ -33,7 +33,7 @@
                          </div>
                      </div>
                  </div>
-                 {{ $errors }}
+
                  <form action="{{ route('login') }}" method="post">
                      @csrf
                      <div class="input-group mb-3">

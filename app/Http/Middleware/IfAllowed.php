@@ -16,12 +16,14 @@ class IfAllowed
      */
     public function handle($request, Closure $next)
     {
-        $user = Auth::user();
-        $permission = $request->path();
-        if ($request->route()) {
-            $permission = $request->route()->getName();
+        if (env('APP_ENV') != 'local') {
+            $user = Auth::user();
+            $permission = $request->path();
+            if ($request->route()) {
+                $permission = $request->route()->getName();
+            }
+            abort_if(!$user->can($permission), 403, 'No Permission');
         }
-        abort_if(!$user->can($permission), 403, 'No Permission');
         return $next($request);
     }
 }

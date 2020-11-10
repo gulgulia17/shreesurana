@@ -37,6 +37,16 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('leads.index') ? 'active' : null }}"
+                        href="{{ route('leads.index') }}">
+                        <i class="far fa-fw fa-circle nav-icon"></i>
+                        <p>
+                            Leads
+                        </p>
+                    </a>
+                </li>
+
                 @can('permission.index', 'role.index', 'user.index')
                     <li class="nav-header text-uppercase">
                         Settings

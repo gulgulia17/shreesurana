@@ -20,14 +20,55 @@
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
-                    <table class="table text-center" id="table">
-                        <thead>
-                            <tr>
-                            </tr>
-                        </thead>
-                    </table>
+                    {{$dataTable->table()}}
+                    <div class="modal fade" id="files-attach-modal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body text-left">
+                                            <form action="" method="post" id="file-attach-form">
+                                                @csrf
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="total">Total Data</label>
+                                                            <input class="form-control total" type="number" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="start">From</label>
+                                                            <input id="start" name="start" class="form-control" type="number" value="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="end">To</label>
+                                                            <input id="end" name="end" class="form-control" type="number" value="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="user">Choose user</label>
+                                                            <input class="form-control total" type="number" value="0" name="total" hidden>
+                                                            <select class="form-control" name="user" id="user">
+                                                              <option value="">Please choose the user you want to attach</option>
+                                                            </select>
+                                                          </div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-sm btn-primary">Submit</button>
+                                            </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+{{$dataTable->scripts()}}
 @endsection

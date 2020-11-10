@@ -46,56 +46,13 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script src="{{asset('vendor/datatables/buttons.server-side.js')}}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/admin-lte/3.0.5/js/adminlte.min.js"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
-    <script>
-      $(".selectSearch").select2({
-        width: 'resolve' // need to override the changed default
-      });
-
-    </script>
+    @stack('scripts')
     @yield('script')
-    <script type="text/javascript">
-      function getCurrentTime() {
-        var now = new Date();
-        var hh = now.getHours();
-        var min = now.getMinutes();
-        var ampm = (hh >= 12) ? 'PM' : 'AM';
-        hh = hh % 12;
-        hh = hh ? hh : 12;
-        hh = hh < 10 ? '0' + hh : hh;
-        min = min < 10 ? '0' + min : min;
-        var time = hh + ":" + min + " " + ampm;
-        return time;
-      }
 
-      function send_msg() {
-        $('.start_chat').hide();
-        const _token = $('input[name="_token"]').val();
-        const message = $('input[name="message"]').val();
-        const ip = $('input[name="ip"]').val();
-        var html = '<li class="messages-me clearfix"><span class="message-img"><img src="assets/images/logo/user_avatar.png" class="avatar-sm rounded-circle"></span><div class="message-body clearfix"><div class="message-header"><strong class="messages-title">Me</strong> <small class="time-messages text-muted"><span class="fas fa-time"></span> <span class="minutes">' + getCurrentTime() + '</span></small> </div><p class="messages-p">' + message + '</p></div></li>';
-        $('.messages-list').append(html);
-        $('#input-me').val('');
-        if (message) {
-          $.ajax({
-            type: "post",
-            url: "/sendmessage",
-            data: {
-              'message': message,
-              'ip': ip,
-              '_token': _token
-            },
-            success: function(result) {
-              var html = '<li class="messages-you clearfix"><span class="message-img"><img src="assets/images/logo/logo.png" style="width: 10%;" class="avatar-sm rounded-circle"></span><div class="message-body clearfix"><div class="message-header"><strong class="messages-title">School App</strong> <small class="time-messages text-muted"><span class="fas fa-time"></span> <span class="minutes">' + getCurrentTime() + '</span></small> </div><p class="messages-p">' + result + '</p></div></li>';
-              $('.messages-list').append(html);
-              $('.messages-box').scrollTop($('.messages-box')[0].scrollHeight);
-            }
-          });
-        }
-      }
-    </script>
   </body>
 
 </html>

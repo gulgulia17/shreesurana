@@ -55,4 +55,9 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->belongsToMany(Models\File::class);
     }
+
+    public function data()
+    {
+        return $this->belongsToMany(Models\Data::class,'user_data');
+    }
 }

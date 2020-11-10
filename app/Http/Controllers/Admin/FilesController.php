@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\File;
+use App\Imports\DataImport;
 use Illuminate\Http\Request;
+use App\DataTables\FilesDataTable;
+use App\Http\Controllers\Controller;
 
 class FilesController extends Controller
 {
@@ -13,9 +15,9 @@ class FilesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(FilesDataTable $dataTable)
     {
-        return view('admin.filemanager.index');
+        return $dataTable->render('admin.filemanager.index');
     }
 
     /**
@@ -36,14 +38,60 @@ class FilesController extends Controller
      */
     public function store(Request $request)
     {
-        $this->storeImage(File::create($this->validateRequest($request)));
-        return back()->wuth('success', 'Uploaded Successfully');
+        $data = $this->storeImage(File::create($this->validateRequest($request)));
+        if ($data->extracted) {
+            return $this->import($data);
+        }
+        return back()->with('success', 'Uploaded Successfully');
     }
 
-    
-    public function attach(Request $request)
+    public function import(File $files)
     {
-        return $request;
+        $import = new DataImport($files->id);
+        $import->import($files->file);
+        
+        $fails = [];
+
+        foreach ($import->failures() as $failure) {
+            $fails = array_merge($fails, $failure->errors());
+        }
+
+        if (count($fails)) {
+            return back()->with([
+                'error' => 'Some data skiped to be extracted due to errors.',
+                'data' => array_unique($fails),
+            ]);
+        }
+
+        return back()->with('success', 'Data extracted successfully');
+    }
+
+    public function attach(Request $request, File $files)
+    {
+        if ($request->ajax()) {
+            return response([
+                'total' => count($files->data),
+                'users' => \App\User::all(),
+            ]);
+        }
+
+        if ($request->method() == 'POST') {
+            $data = $request->validate([
+                'total' => 'required|numeric|min:0',
+                'start' => "required|numeric|min:0|lte:total",
+                'end' => "required|numeric|gte:start|lte:total",
+                'user' => "required|exists:users,id"
+            ], [
+                'lte' => 'The :attribute must be less than or equal to total.',
+                'gte' => 'The :attribute must be less than or equal to total.',
+            ]);
+
+            \App\User::find($request->user)->data()
+            ->sync(\App\Models\Data::skip($request->start)
+            ->take($request->end)->pluck('id'));
+
+            return back()->with('success','Assigned Successfully');
+        }
     }
 
     /**
@@ -71,11 +119,16 @@ class FilesController extends Controller
 
     public function validateRequest($request)
     {
-        return $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|min:5',
             'description' => 'sometimes',
-            'file' => 'required|file|max:10',
+            'extracted' => 'sometimes',
+            'file' => 'required|file|max:10000',
         ]);
+
+        $data['extracted'] = $data['extracted'] ?? 0;
+
+        return $data;
     }
 
     public function storeImage($data)
@@ -87,6 +140,7 @@ class FilesController extends Controller
             $data->file = $imagePath;
             $data->save();
         }
+        return $data;
     }
     /**
      * Remove the specified resource from storage.
