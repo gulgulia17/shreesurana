@@ -51,7 +51,7 @@ class LeadsDataTable extends DataTable
             ->setTableId('leads-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom("<'row'<'col-md-4'l><'col-md-4 text-center'B><'col-md-4'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'i><'col-md-6'p>>")
+            ->dom("<'row'<'col-md-6'B><'col-md-6'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'l><'col-md-6'p>>")
             ->orderBy(0, 'asc')
             ->buttons(
                 Button::make('reset'),
