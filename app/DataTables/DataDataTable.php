@@ -3,15 +3,19 @@
 namespace App\DataTables;
 
 use App\Models\Data;
-use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class LeadsDataTable extends DataTable
+class DataDataTable extends DataTable
 {
+    public $file;
+    public function __construct($file)
+    {
+        $this->file = $file;
+    }
     /**
      * Build DataTable class.
      *
@@ -22,21 +26,19 @@ class LeadsDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', function (Data $data) {
-                return view('pages.leads.action', compact('data'));
-            });
+            ->addColumn('action', 'admin.data.action');
     }
 
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\Data $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query(Data $model)
     {
-        return $model->whereHas('users', function ($query) {
-            $query->where('user_id', Auth::id());
+        $file = $this->file;
+        return $model->whereHas('files', function ($query) use ($file) {
+            $query->where('id', $file);
         })->newQuery();
     }
 
@@ -48,13 +50,13 @@ class LeadsDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            ->setTableId('leads-table')
+            ->parameters(['initComplete' => 'function() {}'])
+            ->setTableId('data-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom("<'row'<'col-md-4'l><'col-md-4 text-center'B><'col-md-4'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'i><'col-md-6'p>>")
-            ->orderBy(0, 'asc')
+            ->dom("<'row'<'col-md-6'B><'col-md-6'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'l><'col-md-6'p>>")
+            ->orderBy(0)
             ->buttons(
-                Button::make('reset'),
                 Button::make('reload')
             );
     }
@@ -67,9 +69,9 @@ class LeadsDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::make('id'),
             Column::make('name'),
             Column::make('number'),
+            Column::make('updated_at'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -85,6 +87,6 @@ class LeadsDataTable extends DataTable
      */
     protected function filename()
     {
-        return 'Leads_' . date('YmdHis');
+        return 'Data_' . date('YmdHis');
     }
 }

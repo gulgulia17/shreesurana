@@ -16,7 +16,7 @@
                     </a>
                 </li>
 
-
+                @can('profile.index')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('profile.index') ? 'active' : null }}"
                         href="{{ route('profile.index') }}">
@@ -26,7 +26,8 @@
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('files.index')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('files.index') ? 'active' : null }}"
                         href="{{ route('files.index') }}">
@@ -36,7 +37,8 @@
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('leads.index')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('leads.index') ? 'active' : null }}"
                         href="{{ route('leads.index') }}">
@@ -46,6 +48,7 @@
                         </p>
                     </a>
                 </li>
+                @endcan
 
                 @can('permission.index', 'role.index', 'user.index')
                     <li class="nav-header text-uppercase">

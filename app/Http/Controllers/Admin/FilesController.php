@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Models\File;
 use App\Imports\DataImport;
 use Illuminate\Http\Request;
+use App\DataTables\DataDataTable;
 use App\DataTables\FilesDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\Data;
 
 class FilesController extends Controller
 {
@@ -49,7 +51,7 @@ class FilesController extends Controller
     {
         $import = new DataImport($files->id);
         $import->import($files->file);
-        
+
         $fails = [];
 
         foreach ($import->failures() as $failure) {
@@ -62,7 +64,7 @@ class FilesController extends Controller
                 'data' => array_unique($fails),
             ]);
         }
-
+        $files->update(['extracted' => 1]);
         return back()->with('success', 'Data extracted successfully');
     }
 
@@ -76,7 +78,7 @@ class FilesController extends Controller
         }
 
         if ($request->method() == 'POST') {
-            $data = $request->validate([
+            $request->validate([
                 'total' => 'required|numeric|min:0',
                 'start' => "required|numeric|min:0|lte:total",
                 'end' => "required|numeric|gte:start|lte:total",
@@ -86,12 +88,25 @@ class FilesController extends Controller
                 'gte' => 'The :attribute must be less than or equal to total.',
             ]);
 
-            \App\User::find($request->user)->data()
-            ->sync(\App\Models\Data::skip($request->start)
-            ->take($request->end)->pluck('id'));
+            $dataID = \App\Models\Data::skip($request->start)
+                ->take($request->end)->pluck('id');
 
-            return back()->with('success','Assigned Successfully');
+            $userHasData = \App\User::whereHas('data', function ($query) use ($dataID) {
+                $query->whereIn('data_id', $dataID);
+            })->where('id', '!=', $request->user)->exists();
+
+            if ($userHasData)
+                return back()->with('error', 'Given data already attached');
+
+            \App\User::find($request->user)->data()
+                ->syncWithoutDetaching($dataID);
+
+            return back()->with('success', 'Assigned Successfully');
         }
+    }
+
+    public function show(File $file)
+    {
     }
 
     /**

@@ -17,11 +17,17 @@ Route::group(['middleware' => ['auth', 'IfAllowed']], function () {
     Route::GET('profile/user', 'Admin\UserController@profile')->name('profile.index');
     Route::POST('profile/user', 'Admin\UserController@profileStore')->name('profile.store');
 });
-Route::get('leads','LeadsController@index')->name('leads.index');
-Route::get('files/datatables','FilesController@getFiles')->name('files.get.data');
+Route::get('leads', 'LeadsController@index')->name('leads.index');
+Route::post('leads/{lead}', 'LeadsController@action')->name('lead.action');
+
 Route::match(
-    ['get','post'],
+    ['get', 'post'],
     'files/{files}/attach',
     'Admin\FilesController@attach'
 )->name('files.attach');
+Route::get('files/import/{files}', 'Admin\FilesController@import')->name('files.import');
 Route::resource('files', 'Admin\FilesController');
+
+Route::get('data/{data}/edit', 'Admin\DataController@edit')->name('data.edit');
+Route::get('data/{data}', 'Admin\DataController@show')->name('data.show');
+Route::delete('data/{data}', 'Admin\DataController@destroy')->name('data.destroy');

@@ -25,6 +25,7 @@
                 <table class="table text-center" id="table">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Name</th>
                             @foreach ($role as $item)
                             <th>{{$item->name}}</th>
@@ -32,8 +33,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($permission as $item)
+                        @foreach ($permission as $key => $item)
                         <tr>
+                        <td>{{$key+1}}</td>
                             <td>{{$item->name}}</td>
                             @foreach ($role as $roles)
                             <form action="{{route('permission.give')}}" method="post">
