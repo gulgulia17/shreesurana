@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Response;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\DataTables\ResponseDataTable;
 use App\Http\Controllers\Controller;
+use App\DataTables\ResponseDataTable;
 
 class ResponseController extends Controller
 {
@@ -37,8 +38,13 @@ class ResponseController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required|min:3',
+        ]);
+        
+        $request->merge([
+            'jsid' => Str::slug($request->name),
         ]);
 
         Response::create($request->all());
