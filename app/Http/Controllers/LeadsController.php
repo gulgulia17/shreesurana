@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Data;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use App\DataTables\LeadsDataTable;
-use Illuminate\Support\Facades\Auth;
 
 class LeadsController extends Controller
 {
@@ -20,14 +18,58 @@ class LeadsController extends Controller
         return $dataTable->render('pages.leads.index');
     }
 
-    public function action(Request $request, Data $lead)
+    public function pending(Request $request)
     {
-        $data = $lead->whereHas('users', function ($query) use ($lead) {
-            $query->where(['data_id' => $lead->id, 'user_id' => Auth::id()]);
-        })->first();
+        $pending = $request->session()->get('leads') ? $request->session()->get('leads')->load('data') : [];
+        if (!$pending) {
+            $pending = $this->getPending();
+        }
+        return view('pages.leads.pending', ['leads' => $pending]);
+    }
 
-        abort_if(!$data, 404);
+    public function action(Request $request, $lead)
+    {
 
-        return $request->all();
+        $request->merge([
+            'data_id' => $lead,
+            'user_id' => auth()->id(),
+        ]);
+
+
+        // $data = $lead->whereHas('users', function ($query) use ($lead) {
+        //     $query->where(['data_id' => $lead->id, 'user_id' => Auth::id()]);
+        // })->first();
+
+        // abort_if(!$data, 404);
+        $validated = $request->validate([
+            'data_id' => 'exists:data,id',
+            'user_id' => 'exists:users,id',
+            'later' => 'sometimes',
+            'response_id' => 'required|exists:responses,id',
+            'remark' => 'required|min:3',
+        ]);
+        if (!array_key_exists('later', $validated)) {
+            $validated['later'] = null;
+        }
+
+        Lead::updateOrCreate(
+            [
+                'data_id' => $request->data_id,
+                'user_id' => $request->user_id,
+            ],
+            $validated
+        );
+
+        return redirect(route('home'))->with('success', 'Successfully');
+    }
+
+    private function getPending()
+    {
+        return Lead::all()->filter(function ($lead) {
+            if (!$lead->is_allowed) {
+                $this->is_allowed = false;
+                return $lead;
+            }
+        });
     }
 }

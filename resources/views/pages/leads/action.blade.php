@@ -19,26 +19,39 @@
                 <div class="modal-body">
                     <div class="row text-left">
                         <div class="form-group col-md-6">
-                            <label for="name">Name</label>
-                            <input type="text" disabled id="name" class="form-control" placeholder=""
+                            <label for="name{{ $data->id }}">Name</label>
+                            <input type="text" disabled id="name{{ $data->id }}" class="form-control" placeholder=""
                                 value="{{ $data->name }}">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="number">Number</label>
-                            <input type="text" disabled id="number" class="form-control" placeholder=""
+                            <label for="number{{ $data->id }}">Number</label>
+                            <input type="text" disabled id="number{{ $data->id }}" class="form-control" placeholder=""
                                 value="{{ $data->number }}">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="address">Address</label>
-                            <input type="text" disabled id="address" class="form-control" placeholder=""
+                            <label for="address{{ $data->id }}">Address</label>
+                            <input type="text" disabled id="address{{ $data->id }}" class="form-control" placeholder=""
                                 value="{{ $data->name }}">
                         </div>
                         <div class="form-group col-md-12">
-                            <select class="form-control" name="response" id="response">
+                            <label for="response_id{{ $data->id }}">Response</label>
+                            <select class="form-control" name="response_id" id="response_id{{ $data->id }}" required
+                                onchange="responseChange(this,event)">
                                 <option value="">Choose response</option>
-                                <option></option>
-                                <option></option>
+                                @foreach ($responses as $response)
+                                    <option value="{{ $response->id }}" data-id="{{ $response->jsid }}">
+                                        {{ $response->name }}</option>
+                                @endforeach
                             </select>
+                        </div>
+                        <div class="form-group col-md-12 d-none later">
+                            <label for="later{{ $data->id }}">Later</label>
+                            <input type="datetime-local" id="later{{ $data->id }}" name="later" class="form-control"
+                                required disabled>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="remark{{ $data->id }}">Remark</label>
+                            <textarea class="form-control" name="remark" id="remark{{ $data->id }}" rows="3"></textarea>
                         </div>
                     </div>
                 </div>

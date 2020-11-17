@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Data;
+use App\Models\Response;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
@@ -23,7 +24,7 @@ class LeadsDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('action', function (Data $data) {
-                return view('pages.leads.action', compact('data'));
+                return view('pages.leads.action', ['data' => $data, 'responses' => Response::all()]);
             });
     }
 
@@ -35,7 +36,7 @@ class LeadsDataTable extends DataTable
      */
     public function query(Data $model)
     {
-        return $model->whereHas('users', function ($query) {
+        return $model->whereDoesntHave('lead')->whereHas('users', function ($query) {
             $query->where('user_id', Auth::id());
         })->newQuery();
     }

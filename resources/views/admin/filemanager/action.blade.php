@@ -15,7 +15,12 @@
     <a href="{{ route('files.edit', $file->id) }}" class="btn btn-sm btn-warning mx-1">
         <i class="fas fa-pencil-alt"></i>
     </a>
-    <a href="{{ route('files.destroy', $file->id) }}" class="btn btn-sm btn-danger mx-1">
+    
+    <a href="#" data-id="delete-form-{{ $file->id }}"
+        class="btn btn-sm btn-danger mx-1" onclick="deleteData(event,this);">
         <i class="fa fa-trash" aria-hidden="true"></i>
     </a>
+    <form id="delete-form-{{ $file->id }}" action="{{ route('files.destroy', $file->id) }}" method="POST" style="display: none;">
+        @csrf @method('delete')
+    </form>
 </div>

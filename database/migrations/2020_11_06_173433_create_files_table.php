@@ -20,6 +20,7 @@ class CreateFilesTable extends Migration
             $table->boolean('extracted')->default(0);
             $table->longText('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -17,26 +17,37 @@
                 <div class="card-header">
                     <ul class="nav nav-tabs align-items-end card-header-tabs w-100">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{!!  route('leads.index') !!}">
-                                <i class="fa fa-list mr-2"></i>{{ __('Leads List') }}
+                            <a class="nav-link active" href="#">
+                                <i class="fa fa-list mr-2"></i>{{ __('Pending Leads List') }}
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
-                    {{ $dataTable->table() }}
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Number</th>
+                                <th>Previous Response</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($leads ?? [] as $lead)
+                                <tr>
+                                    <td>{{ $lead->data->name }}</td>
+                                    <td>{{ $lead->data->number }}</td>
+                                    <td>{{ $lead->remark }}</td>
+                                    <td>@include('pages.leads.action',['data'=>$lead->data,'responses' => \App\Models\Response::all()])</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
-
         </div>
     </div>
 @endsection
 @section('script')
-    {{ $dataTable->scripts() }}
-
-    <script>
-        
-
-    </script>
 @endsection

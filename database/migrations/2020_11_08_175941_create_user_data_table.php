@@ -18,6 +18,7 @@ class CreateUserDataTable extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('data_id')->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

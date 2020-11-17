@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\DataTables\DataDataTable;
-use App\Http\Controllers\Controller;
-use App\Models\Data;
+use App\Models\Response;
 use Illuminate\Http\Request;
+use App\DataTables\ResponseDataTable;
+use App\Http\Controllers\Controller;
 
-class DataController extends Controller
+class ResponseController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ResponseDataTable $dataTable)
     {
-        //
+        return $dataTable->render('admin.response.index');
     }
 
     /**
@@ -24,9 +24,9 @@ class DataController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Response $response)
     {
-        //
+        return view('admin.response.create', compact('response'));
     }
 
     /**
@@ -37,59 +37,62 @@ class DataController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|min:3',
+        ]);
+
+        Response::create($request->all());
+        return back()->with('success', 'Inserted Successfully.');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Data  $data
+     * @param  \App\Models\Response  $response
      * @return \Illuminate\Http\Response
      */
-    public function show(\App\Models\File $data)
+    public function show(Response $response)
     {
-        $dataTable = new DataDataTable($data->id);
-        return $dataTable->render('admin.data.show');
+        return view('admin.response.show', compact('response'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Data  $data
+     * @param  \App\Models\Response  $response
      * @return \Illuminate\Http\Response
      */
-    public function edit(Data $data)
+    public function edit(Response $response)
     {
-        return view('admin.data.edit', compact('data'));
+        return view('admin.response.edit', compact('response'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Data  $data
+     * @param  \App\Models\Response  $response
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Data $data)
+    public function update(Request $request, Response $response)
     {
         $request->validate([
-            "name" => "required|string",
-            "number" => "required|string|max:10|unique:data,number,{$data->id},id"
+            'name' => 'required|min:3',
         ]);
 
-        $data->update($request->all());
+        $response->update($request->all());
         return back()->with('success', 'Updated Successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Data  $data
+     * @param  \App\Models\Response  $response
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Data $data)
+    public function destroy(Response $response)
     {
-        $data->delete();
+        $response->delete();
         return back()->with('success', 'Deleted Successfully.');
     }
 }

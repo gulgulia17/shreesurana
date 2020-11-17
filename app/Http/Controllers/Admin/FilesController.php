@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\File;
 use App\Imports\DataImport;
 use Illuminate\Http\Request;
-use App\DataTables\DataDataTable;
 use App\DataTables\FilesDataTable;
 use App\Http\Controllers\Controller;
-use App\Models\Data;
+use Faker\Factory as Faker;
 
 class FilesController extends Controller
 {
@@ -19,9 +18,17 @@ class FilesController extends Controller
      */
     public function index(FilesDataTable $dataTable)
     {
+        // $faker = Faker::create();
+        // foreach (range(1, 5000) as $index) {
+        //     \App\Models\Data::create([
+        //         'file_id'=>3,
+        //         'name' => $faker->name,
+        //         'number' => $faker->PhoneNumber,
+        //     ]);
+        // }
+        // exit;
         return $dataTable->render('admin.filemanager.index');
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -107,6 +114,7 @@ class FilesController extends Controller
 
     public function show(File $file)
     {
+        return $file;
     }
 
     /**
@@ -163,8 +171,13 @@ class FilesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(File $file)
     {
-        //
+        $file->data()->each(function ($query) {
+            $query->users()->detach();
+            $query->delete();
+        });
+        $file->delete();
+        return back()->with('success', 'Deleted Successfully.');
     }
 }

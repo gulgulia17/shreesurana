@@ -38,6 +38,7 @@
                     </a>
                 </li>
                 @endcan
+
                 @can('leads.index')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('leads.index') ? 'active' : null }}"
@@ -45,6 +46,18 @@
                         <i class="far fa-fw fa-circle nav-icon"></i>
                         <p>
                             Leads
+                        </p>
+                    </a>
+                </li>
+                @endcan
+
+                @can('leads.pending')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('leads.pending') ? 'active' : null }}"
+                        href="{{ route('leads.pending') }}">
+                        <i class="far fa-fw fa-circle nav-icon"></i>
+                        <p>
+                            Leads Pending
                         </p>
                     </a>
                 </li>

@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateUsersTable extends Migration
 {
@@ -20,8 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('number')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('api_token');
+            $table->string('password')->default(bcrypt('12345678'));
+            $table->string('api_token')->default(Str::random(60));
             $table->enum('type', ['Admin', 'User'])->nullable();
             $table->rememberToken();
             $table->timestamps();

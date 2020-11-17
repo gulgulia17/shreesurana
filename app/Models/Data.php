@@ -5,9 +5,11 @@ namespace App\Models;
 use App\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Data extends Model
 {
+    use SoftDeletes;
     protected $guarded = [];
 
     public function users()
@@ -18,6 +20,11 @@ class Data extends Model
     public function files()
     {
         return $this->belongsTo(File::class, 'file_id');
+    }
+
+    public function lead()
+    {
+        return $this->hasOne(Lead::class);
     }
 
     public function getUpdatedAtAttribute($value)

@@ -13,4 +13,5 @@ return [
     */
 
     'files' => 'Files',
+    'leads' => 'Leads'
 ];

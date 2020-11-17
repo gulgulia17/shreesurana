@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Data;
+
 class HomeController extends Controller
 {
     /**
@@ -19,8 +21,11 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Data $lead)
     {
-        return view('home');
+        $leads = $lead->whereHas('users', function ($query) {
+            $query->where('user_id', auth()->id());
+        })->count();
+        return view('home', compact('leads'));
     }
 }

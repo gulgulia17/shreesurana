@@ -17,7 +17,8 @@ class PermissionsTableSeeder extends Seeder
         'LaravelInstaller*',
         'LaravelUpdater*',
         'debugbar*',
-        'cashier.*'
+        'cashier.*',
+        'ignition.*',
     ];
 
     private $exceptControllers = [
@@ -25,7 +26,8 @@ class PermissionsTableSeeder extends Seeder
         'ForgotPasswordController',
         'ResetPasswordController',
         'RegisterController',
-        'PayPalController'
+        'PayPalController',
+        'HealthCheckController',
     ];
 
     /**

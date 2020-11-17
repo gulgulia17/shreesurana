@@ -1,19 +1,19 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class RoleHasPermissionsTableSeeder extends Seeder
 {
+
     /**
-     * Run the database seeds.
+     * Auto generated seed file
      *
      * @return void
      */
     public function run()
     {
-        DB::table('role_has_permissions')->delete();
+        \DB::table('role_has_permissions')->delete();
 
-        DB::table('role_has_permissions')->insert(array());
+        \DB::table('role_has_permissions')->insert(array());
     }
 }

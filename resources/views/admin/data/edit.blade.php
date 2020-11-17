@@ -6,8 +6,8 @@
             <div class="card-title">{{ $data->name }}'s Details</div>
         </div>
         <div class="card-body">
-            <form action="" method="post">
-                @csrf
+            <form action="{{ route('data.update', $data->id) }}" method="post">
+                @csrf @method('patch')
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" name="name" id="name" class="form-control" placeholder="Name"
