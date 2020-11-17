@@ -36,7 +36,7 @@
     <div class="wrapper">
         @include('layouts.includes.navbar')
         @include('layouts.includes.sidebar')
-        @include('layouts.includes.header',[$name])
+        @include('layouts.includes.header',[$name ?? ''])
         @include('layouts.includes.footer')
     </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

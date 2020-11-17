@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         ini_set("memory_limit", -1);
@@ -32,6 +41,43 @@ class UserController extends Controller
         return redirect(route('home'));
     }
 
+    public function profileUpdate(Request $request)
+    {
+        $request->validate([
+            "name" => "required|string",
+            "number" => "required|string|max:10|unique:users,number,{$this->user->id},id"
+        ]);
+
+        $this->user->update($request->all());
+
+        return back()->with('success', 'Updated Successfully.');
+    }
+
+    public function passwordUpdate(Request $request)
+    {
+         $request->validate([
+            "old_password" => ['required', 'string', 'different:password', function ($attribute, $value, $fail) {
+                if (!Hash::check($value, $this->user->password)) {
+                    $fail('Old password is wrong.');
+                }
+            }],
+            "password" => 'required|string|min:8|confirmed',
+        ]);
+
+        $this->user->update($request->all());
+
+        return back()->with('success', 'Updated Successfully.');
+    }
+
+    public function validateProfileRequest($request)
+    {
+        return $request->validate([
+            "name" => "required|string",
+            "number" => "required|string|max:10|unique:users,number,{$this->user->id},id",
+            "email" => "required|string|email|unique:users,email,{$this->user->id},id",
+        ]);
+    }
+
     public function new(Request $request)
     {
         $data = $request->validate([
@@ -48,7 +94,7 @@ class UserController extends Controller
             'type' => $data['role'],
             'password' => Hash::make($data['password']),
             'number' => $data['number'],
-            
+
         ]);
         $user->assignRole($role);
         return redirect(route('user.index'));
@@ -67,41 +113,41 @@ class UserController extends Controller
         return back();
     }
 
-    public function CreateUser(Request $request)
-    {
-        $data = [];
-        $response = 'false';
-        if (isset($request->name)  && isset($request->email) && isset($request->TXNAMOUNT)) {
-            if (User::where('email', $request->email)->first()) {
-                return response([
-                    'message' => 'User already exist.',
-                    'status' => '500',
-                ], 301);
-            }
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'type' => 'School',
-                'amount' => intval($request->TXNAMOUNT),
-                'password' => Hash::make('12345678'),
-            ];
-            $role = Role::findByName($this->getRoleName($data['amount']));
-            $user = User::create($data);
-            if (isset($user)) {
-                $user->assignRole($role);
-                $response = 'true';
-            }
-            return response([
-                'message' => $response,
-                'status' => '200',
-            ], 200);
-        } else {
-            return response([
-                'message' => 'Please add the required feilds.',
-                'status' => '301',
-            ], 301);
-        }
-    }
+    // public function CreateUser(Request $request)
+    // {
+    //     $data = [];
+    //     $response = 'false';
+    //     if (isset($request->name)  && isset($request->email) && isset($request->TXNAMOUNT)) {
+    //         if (User::where('email', $request->email)->first()) {
+    //             return response([
+    //                 'message' => 'User already exist.',
+    //                 'status' => '500',
+    //             ], 301);
+    //         }
+    //         $data = [
+    //             'name' => $request->name,
+    //             'email' => $request->email,
+    //             'type' => 'School',
+    //             'amount' => intval($request->TXNAMOUNT),
+    //             'password' => Hash::make('12345678'),
+    //         ];
+    //         $role = Role::findByName($this->getRoleName($data['amount']));
+    //         $user = User::create($data);
+    //         if (isset($user)) {
+    //             $user->assignRole($role);
+    //             $response = 'true';
+    //         }
+    //         return response([
+    //             'message' => $response,
+    //             'status' => '200',
+    //         ], 200);
+    //     } else {
+    //         return response([
+    //             'message' => 'Please add the required feilds.',
+    //             'status' => '301',
+    //         ], 301);
+    //     }
+    // }
 
     public function getRoleName($role)
     {
@@ -125,41 +171,6 @@ class UserController extends Controller
 
     public function profile()
     {
-        $user = Auth::user();
-        return view('pages.profile.index',compact('user'));
-    }
-
-    public function profileStore(Request $request)
-    {
-        $user = Auth::user();
-        $data = $this->validateRequest($request);
-        if (isset($request->old)) {
-            if (!Hash::check($data['old'], $user->password)) { 
-                return back()->with('error','Old passwrod doesn\'t match');
-            }
-            $data['password'] = Hash::make($request->password);
-        }
-
-        $user->update($data);
-        return back()->with('success','Updated successfully.');
-    }
-
-    public function validateRequest($request)
-    {
-        if (isset($request->old)) {
-            return $request->validate([
-                "name" => "required|string",
-                "number" => "required|string|max:10|unique:users,number,".Auth::id().",id",
-                "email" => "required|string|email|unique:users,email,".Auth::id().",id",
-                "old" => "required|string|different:password",
-                "password" => 'required|string|min:8|confirmed',
-            ]);
-        }
-
-        return $request->validate([
-            "name" => "required|string",
-            "number" => "required|string|max:10|unique:users,number,".Auth::id().",id",
-            "email" => "required|string|email|unique:users,email,".Auth::id().",id",
-        ]);
+        return view('pages.profile.index', ['user' => $this->user]);
     }
 }
