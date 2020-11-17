@@ -38,16 +38,7 @@ class ResponseController extends Controller
      */
     public function store(Request $request)
     {
-
-        $request->validate([
-            'name' => 'required|min:3',
-        ]);
-        
-        $request->merge([
-            'jsid' => Str::slug($request->name),
-        ]);
-
-        Response::create($request->all());
+        Response::create($this->validateRequest($request));
         return back()->with('success', 'Inserted Successfully.');
     }
 
@@ -82,11 +73,7 @@ class ResponseController extends Controller
      */
     public function update(Request $request, Response $response)
     {
-        $request->validate([
-            'name' => 'required|min:3',
-        ]);
-
-        $response->update($request->all());
+        $response->update($this->validateRequest($request));
         return back()->with('success', 'Updated Successfully.');
     }
 
@@ -100,5 +87,18 @@ class ResponseController extends Controller
     {
         $response->delete();
         return back()->with('success', 'Deleted Successfully.');
+    }
+
+    public function validateRequest($request)
+    {
+        $request->validate([
+            'name' => 'required|min:3',
+        ]);
+        
+        $request->merge([
+            'jsid' => Str::slug($request->name),
+        ]);
+
+        return $request->all();
     }
 }
