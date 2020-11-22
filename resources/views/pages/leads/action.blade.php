@@ -29,11 +29,6 @@
                                 value="{{ $data->number }}">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="address{{ $data->id }}">Address</label>
-                            <input type="text" disabled id="address{{ $data->id }}" class="form-control" placeholder=""
-                                value="{{ $data->name }}">
-                        </div>
-                        <div class="form-group col-md-12">
                             <label for="response_id{{ $data->id }}">Response</label>
                             <select class="form-control" name="response_id" id="response_id{{ $data->id }}" required
                                 onchange="responseChange(this,event)">
@@ -44,10 +39,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-md-12 d-none later">
+                        <div class="form-group col-md-12">
                             <label for="later{{ $data->id }}">Later</label>
-                            <input type="datetime-local" id="later{{ $data->id }}" name="later" class="form-control"
-                                required disabled>
+                            <input type="datetime-local" id="later{{ $data->id }}" name="later" class="form-control">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="remark{{ $data->id }}">Remark</label>

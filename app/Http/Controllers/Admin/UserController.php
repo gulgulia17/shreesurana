@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\User;
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
@@ -55,7 +56,7 @@ class UserController extends Controller
 
     public function passwordUpdate(Request $request)
     {
-         $request->validate([
+        $request->validate([
             "old_password" => ['required', 'string', 'different:password', function ($attribute, $value, $fail) {
                 if (!Hash::check($value, $this->user->password)) {
                     $fail('Old password is wrong.');
@@ -83,21 +84,22 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'username' => ['sometimes', 'max:255', 'unique:users,username'],
             'role' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'number' => ['required', 'string', 'max:10', 'unique:users,number'],
         ]);
-        $role = Role::findByName('Client');
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'type' => $data['role'],
+            'username' => $data['username'] ?? '',
             'password' => Hash::make($data['password']),
             'number' => $data['number'],
-
         ]);
-        $user->assignRole($role);
-        return redirect(route('user.index'));
+        $user->assignRole(Role::findById($request->role));
+        return redirect(route('user.index'))->with('success', 'User added successfully');
     }
 
     public function store(Request $request)
@@ -113,60 +115,15 @@ class UserController extends Controller
         return back();
     }
 
-    // public function CreateUser(Request $request)
-    // {
-    //     $data = [];
-    //     $response = 'false';
-    //     if (isset($request->name)  && isset($request->email) && isset($request->TXNAMOUNT)) {
-    //         if (User::where('email', $request->email)->first()) {
-    //             return response([
-    //                 'message' => 'User already exist.',
-    //                 'status' => '500',
-    //             ], 301);
-    //         }
-    //         $data = [
-    //             'name' => $request->name,
-    //             'email' => $request->email,
-    //             'type' => 'School',
-    //             'amount' => intval($request->TXNAMOUNT),
-    //             'password' => Hash::make('12345678'),
-    //         ];
-    //         $role = Role::findByName($this->getRoleName($data['amount']));
-    //         $user = User::create($data);
-    //         if (isset($user)) {
-    //             $user->assignRole($role);
-    //             $response = 'true';
-    //         }
-    //         return response([
-    //             'message' => $response,
-    //             'status' => '200',
-    //         ], 200);
-    //     } else {
-    //         return response([
-    //             'message' => 'Please add the required feilds.',
-    //             'status' => '301',
-    //         ], 301);
-    //     }
-    // }
-
-    public function getRoleName($role)
+    public function destroy(User $user)
     {
-        try {
-            switch ($role) {
-                case 'Client':
-                    $name = $role;
-                    break;
-                case '1000':
-                    $name = $role;
-                    break;
-                default:
-                    throw new Exception("There is no role available with the give name", 1);
-                    break;
-            }
-            return $name;
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+        $user->data()->detach();
+        $user->files()->detach();
+        $user->data()->forceDelete();
+        $user->files()->delete();
+        $user->leads()->delete();
+        $user->delete();
+        return back()->with('success', 'Deleted Successfully');
     }
 
     public function profile()

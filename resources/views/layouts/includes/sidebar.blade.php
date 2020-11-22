@@ -51,6 +51,8 @@
                 </li>
                 @endcan
 
+                @if (Route::is('leads.pending'))
+                
                 @can('leads.pending')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('leads.pending') ? 'active' : null }}"
@@ -63,6 +65,7 @@
                 </li>
                 @endcan
 
+                @endif
                 @can('permission.index', 'role.index', 'user.index')
                     <li class="nav-header text-uppercase">
                         Settings

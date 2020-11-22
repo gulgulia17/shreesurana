@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Lead extends Model
 {
     protected $fillable = [
-        'response_id', 'data_id', 'later', 'user_id', 'remark'
+        'response_id', 'data_id', 'later', 'user_id', 'remark', 'closed'
     ];
     protected $appends = ['is_allowed'];
 

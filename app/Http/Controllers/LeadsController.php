@@ -29,38 +29,33 @@ class LeadsController extends Controller
 
     public function action(Request $request, $lead)
     {
-
         $request->merge([
             'data_id' => $lead,
             'user_id' => auth()->id(),
         ]);
 
-
-        // $data = $lead->whereHas('users', function ($query) use ($lead) {
-        //     $query->where(['data_id' => $lead->id, 'user_id' => Auth::id()]);
-        // })->first();
-
-        // abort_if(!$data, 404);
         $validated = $request->validate([
             'data_id' => 'exists:data,id',
             'user_id' => 'exists:users,id',
             'later' => 'sometimes',
+            'closed' => 'sometimes',
             'response_id' => 'required|exists:responses,id',
             'remark' => 'required|min:3',
         ]);
-        if (!array_key_exists('later', $validated)) {
-            $validated['later'] = null;
+
+        if (!$validated['later']) {
+            $validated['closed'] = 1;
         }
 
-        Lead::updateOrCreate(
-            [
-                'data_id' => $request->data_id,
-                'user_id' => $request->user_id,
-            ],
-            $validated
-        );
+        $leadPrevios = Lead::where(['data_id' => $request->data_id, 'user_id' => $request->user_id, 'closed' => 0])->first();
 
-        return redirect(route('home'))->with('success', 'Successfully');
+        if ($leadPrevios) {
+            $leadPrevios->update(['later' => null]);
+        }
+
+        Lead::create($validated);
+
+        return redirect(route('leads.index'))->with('success', 'Successfully');
     }
 
     private function getPending()

@@ -175,7 +175,7 @@ class FilesController extends Controller
     {
         $file->data()->each(function ($query) {
             $query->users()->detach();
-            $query->delete();
+            $query->forceDelete();
         });
         $file->delete();
         return back()->with('success', 'Deleted Successfully.');

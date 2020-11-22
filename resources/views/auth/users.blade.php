@@ -20,21 +20,23 @@
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
-                    <table class="table text-center" id="table">
+                    <table class="table text-center" id="tableCustom">
                         <thead>
                             <tr>
-                                <th class="w-25 text-left">User Name</th>
+                                <th>#</th>
+                                <th>Name</th>
                                 @foreach ($roles as $role)
                                 <th>{{$role->name}}</th>
                                 @endforeach
                                 <th>Number</th>
-                                <th>Login</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($users as $srn => $user)
                             <tr>
-                                <td  class="w-25 text-left">{{$user->name}}</td>
+                                <td>{{$srn+1}}</td>
+                                <td>{{$user->name}}</td>
                                 @foreach ($roles as $role)
                                 <td>
                                     <form method="post">
@@ -47,7 +49,14 @@
                                 @endforeach
                                 <td>{{$user->number ?? 'Not Available'}}</td>
                                 <td>
-                                    <a href="{{route('user.show',$user->id)}}"><i class="fa fa-key" aria-hidden="true"></i></a>
+                                    <a href="{{route('user.show',$user->id)}}" class="btn btn-info btn-sm mx-1"><i class="fa fa-key" aria-hidden="true"></i></a>
+                                    <a href="#" data-id="delete-form-{{ $user->id }}"
+                                        class="btn btn-sm btn-danger mx-1" onclick="deleteData(event,this);">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                    <form id="delete-form-{{ $user->id }}" action="{{ route('user.destroy', $user->id) }}" method="POST" style="display: none;">
+                                        @csrf @method('delete')
+                                    </form>
                                 </td>
                             </tr>
                             @endforeach
@@ -58,3 +67,15 @@
         </div>
     </div>
 @stop
+@section('script')
+    <script>
+        $(function() {
+            $('#tableCustom').DataTable({
+                "columnDefs": [{
+                    targets: [1,2,3,4],
+                    orderable: false,
+                }]
+            });
+        });
+    </script>
+@endsection

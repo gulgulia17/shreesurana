@@ -31,12 +31,9 @@ Route::group(['middleware' => ['auth', 'IfAllowed', 'lead_pending']], function (
     Route::get('/home', 'HomeController@index')->name('home');
     Route::GET('profile/user', 'Admin\UserController@profile')->name('profile.index');
     Route::get('leads', 'LeadsController@index')->name('leads.index');
-
     Route::get('files/import/{files}', 'Admin\FilesController@import')->name('files.import');
     Route::get('data/{data}/edit', 'Admin\DataController@edit')->name('data.edit');
     Route::get('data/{data}', 'Admin\DataController@show')->name('data.show');
-
-
 });
 
 Route::get('leads/pending', 'LeadsController@pending')->name('leads.pending');

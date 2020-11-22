@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Lead;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -58,6 +59,22 @@ class User extends Authenticatable implements HasMedia
 
     public function data()
     {
-        return $this->belongsToMany(Models\Data::class,'user_data');
+        return $this->belongsToMany(Models\Data::class, 'user_data');
+    }
+
+    public function leads()
+    {
+        return $this->hasMany(Lead::class);
+    }
+
+    public function setUsernameAttribute($value)
+    {
+        $username = \Illuminate\Support\Str::snake(strtolower($this->attributes['name']));
+
+        for ($i = 1; 1 == User::withTrashed()->whereUsername($username)->exists(); $i++) {
+            $username = \Illuminate\Support\Str::snake(strtolower($this->attributes['name'])) . "_{$i}";
+        }
+
+        $this->attributes['username'] = $username;
     }
 }

@@ -18,6 +18,7 @@ class CreateLeadsTable extends Migration
             $table->foreignId('response_id')->constrained();
             $table->foreignId('data_id')->constrained();
             $table->foreignId('user_id')->constrained();
+            $table->boolean('closed')->default(0);
             $table->dateTime('later')->nullable();
             $table->text('remark');
             $table->timestamps();
