@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'Reliable Avisore',
                 'email' => 'admin@reliableadvisore.com',
                 'username' => 'admin',
-                'number' => '8619777091',
+                'number' => '8005751424',
                 'email_verified_at' => NULL,
                 'password' => '$2y$10$VcbOY0PSo8U62azgGWzuy.ExOInNMso0HpCpqXbr3BdMGadiC5qVe',
                 'api_token' => 'MULUoJUTGPzMD4MTjkZVCkNh5W5nLSdGxgCDbArEEiqRxIfXRM52dFLTmkFhHdrwmqTK9eRJxHlh9fhN',
