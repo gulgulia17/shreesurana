@@ -9,7 +9,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column " data-widget="treeview" role="menu">
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('home') ? 'active' : null }}" href="{{ route('home') }}">
-                        <i class="far fa-fw fa-circle nav-icon"></i>
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
                         <p>
                             Dashboard
                         </p>
@@ -31,9 +31,21 @@
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('files.index') ? 'active' : null }}"
                         href="{{ route('files.index') }}">
-                        <i class="far fa-fw fa-circle nav-icon"></i>
+                        <i class="far fa-file-excel nav-icon"></i>
                         <p>
                             Files
+                        </p>
+                    </a>
+                </li>
+                @endcan
+
+                @can('response.index')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('response.index') ? 'active' : null }}"
+                        href="{{ route('response.index') }}">
+                        <i class="fas fa-reply nav-icon"></i>
+                        <p>
+                            Responses
                         </p>
                     </a>
                 </li>
@@ -43,7 +55,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('leads.index') ? 'active' : null }}"
                         href="{{ route('leads.index') }}">
-                        <i class="far fa-fw fa-circle nav-icon"></i>
+                        <i class="fas fa-headset nav-icon"></i>
                         <p>
                             Leads
                         </p>
@@ -74,7 +86,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{ Route::is('permission.index') ? 'active' : null }}"
                                 href="{{ route('permission.index') }}">
-                                <i class="far fa-fw fa-circle nav-icon"></i>
+                                <i class="fas fa-exclamation-triangle nav-icon"></i>
                                 <p>
                                     Permissions
                                 </p>
@@ -86,7 +98,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{ Route::is('role.index') ? 'active' : null }}"
                                 href="{{ route('role.index') }}">
-                                <i class="far fa-fw fa-circle nav-icon"></i>
+                                <i class="fas fa-user-tag nav-icon"></i>
                                 <p>
                                     All Roles
                                 </p>
@@ -99,7 +111,7 @@
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('user.index') ? 'active' : null }}"
                             href="{{ route('user.index') }}">
-                            <i class="far fa-fw fa-circle nav-icon"></i>
+                            <i class="fas fa-users nav-icon"></i>
                             <p>
                                 All User
                             </p>

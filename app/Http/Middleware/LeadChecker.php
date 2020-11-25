@@ -17,14 +17,15 @@ class LeadChecker
     private $is_allowed = true;
     public function handle($request, Closure $next)
     {
-        $final = Lead::all()->filter(function ($lead) {
-            if (!$lead->is_allowed) {
-                $this->is_allowed = false;
-                return $lead;
-            }
-        });
+        $leads = Lead::with('response','data')
+            ->get()->filter(function ($lead) {
+                if (!$lead->is_allowed) {
+                    $this->is_allowed = false;
+                    return $lead;
+                }
+            });
         if (!$this->is_allowed) {
-            return redirect(route('leads.pending'))->with(['leads' => $final]);
+            return redirect(route('leads.pending'))->with(['leads' => $leads]);
         }
         return $next($request);
     }

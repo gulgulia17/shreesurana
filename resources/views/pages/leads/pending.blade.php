@@ -24,12 +24,13 @@
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
-                    <table class="table" id="table">
+                    {{-- <table class="table" id="table">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Number</th>
                                 <th>Previous Response</th>
+                                <th>Remark</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -38,16 +39,22 @@
                                 <tr>
                                     <td>{{ $lead->data->name }}</td>
                                     <td>{{ $lead->data->number }}</td>
-                                    <td>{{ $lead->remark }}</td>
-                                    <td>@include('pages.leads.action',['data'=>$lead->data,'responses' => \App\Models\Response::all()])</td>
+                                    <td>{{ $lead->response ? $lead->response->name : 'Not Available' }}</td>
+                                    <td><span class="bg-info px-3 py-2 rounded">{{ $lead->remark }}</span></td>
+                                    <td>@include('pages.leads.action',['data'=>$lead->data,'responses' =>
+                                        \App\Models\Response::all()])</td>
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table> --}}
+                    {{ $dataTable->table() }}
+
                 </div>
             </div>
         </div>
     </div>
 @endsection
 @section('script')
+{{ $dataTable->scripts() }}
+
 @endsection

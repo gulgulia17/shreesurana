@@ -2,14 +2,15 @@
 
 namespace App\DataTables;
 
-use App\Models\Response;
+use Carbon\Carbon;
+use App\Models\Lead;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class ResponseDataTable extends DataTable
+class PendingLeadDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -21,22 +22,33 @@ class ResponseDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', 'admin.response.action')
-            ->editColumn('color', function ($color) {
-                return "<div style='width:25px;height:25px;background-color:{$color->color}'></div>";
+            ->addColumn('action', function ($lead) {
+                return view('pages.leads.action', [
+                    'data' => $lead->data,
+                    'responses' => \App\Models\Response::all()
+                ]);
             })
-            ->escapeColumns('color');
+            ->editColumn('response.name', function ($value) {
+                return "<span class='px-3 py-2' style='background-color: {$value->response->color};'>{$value->response->name}</span>";
+            })
+            ->editColumn('remark', function ($value) {
+                return "<span class='bg-info px-3 py-2'>{$value->remark}</span>";
+            })
+            ->escapeColumns('response.name')
+            ->escapeColumns('remark');
     }
 
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\Response $model
+     * @param \App\Models\Lead $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Response $model)
+    public function query(Lead $model)
     {
-        return $model->newQuery();
+        return $model->with('response', 'data')->where('closed', 0)
+            ->where('later', '<', Carbon::now()->format('Y-m-d H:i:s'))
+            ->newQuery();
     }
 
     /**
@@ -47,7 +59,7 @@ class ResponseDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            ->setTableId('response-table')
+            ->setTableId('pendinglead-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom("<'row'<'col-md-6'B><'col-md-6'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'l><'col-md-6'p>>")
@@ -66,8 +78,13 @@ class ResponseDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('name'),
-            Column::make('color'),
+            Column::computed('data.name', 'Name')
+                ->sortable(true),
+            Column::computed('data.number', 'Number')
+                ->sortable(true),
+            Column::computed('response.name', 'Previos Response')
+                ->sortable(true),
+            Column::make('remark'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -83,6 +100,6 @@ class ResponseDataTable extends DataTable
      */
     protected function filename()
     {
-        return 'Response_' . date('YmdHis');
+        return 'PendingLead_' . date('YmdHis');
     }
 }

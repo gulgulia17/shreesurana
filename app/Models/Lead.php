@@ -15,7 +15,7 @@ class Lead extends Model
     public function getIsAllowedAttribute()
     {
         if (isset($this->later)) {
-            if ($this->user->id == auth()->id()) {
+            if ($this->user->id == auth()->id() && !$this->closed) {
                 return Carbon::parse($this->later)->format('Y-m-d H:i') > Carbon::now()->format('Y-m-d H:i');
             }
         }
@@ -30,5 +30,10 @@ class Lead extends Model
     public function user()
     {
         return $this->belongsTo(\App\User::class);
+    }
+
+    public function response()
+    {
+        return $this->belongsTo(\App\Models\Response::class);
     }
 }

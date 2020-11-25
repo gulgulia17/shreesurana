@@ -26,6 +26,33 @@ function responseChange(param, event) {
         }
     }
     $(later).addClass('d-none');
-    $(later).children('input').attr('disabled','true');
+    $(later).children('input').attr('disabled', 'true');
     return;
+}
+
+function leadClosed(p, e) {
+    e.preventDefault();
+    let URL = $(p).data('href');
+    let data = {
+        _token: $('#csrf-token').attr('content'),
+        _method: 'PATCH',
+        close: true,
+    }
+
+    $.ajax({
+        type: "POST",
+        url: URL,
+        data: data,
+        success: function (response) {
+            if (!response.success) {
+                $.each(response.errors, function (i, v) {
+                    v.forEach(error => {
+                        toastr.error(error)
+                    });
+                });
+                return;
+            }
+            $('.buttons-reload').trigger('click');
+        }
+    });
 }

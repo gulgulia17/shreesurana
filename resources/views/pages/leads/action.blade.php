@@ -3,6 +3,11 @@
         data-target="#leadDetails{{ $data->id }}">
         <i class="fa fa-eye" aria-hidden="true"></i>
     </a>
+
+    <button data-href="{{ route('lead.update', $data->id) }}" class="btn btn-sm btn-success mx-1"
+        onclick="leadClosed(this,event);">
+        <i class="fa fa-check" aria-hidden="true"></i>
+    </button>
 </div>
 <div class="modal fade" id="leadDetails{{ $data->id }}" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
     aria-hidden="true">
@@ -35,7 +40,8 @@
                                 <option value="">Choose response</option>
                                 @foreach ($responses as $response)
                                     <option value="{{ $response->id }}" data-id="{{ $response->jsid }}">
-                                        {{ $response->name }}</option>
+                                        {{ $response->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>

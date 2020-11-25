@@ -17,6 +17,7 @@ class CreateResponsesTable extends Migration
             $table->id();
             $table->mediumText('name');
             $table->string('jsid')->nullable();
+            $table->string('color');
             $table->timestamps();
         });
     }

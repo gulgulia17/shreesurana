@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Response extends Model
 {
     protected $fillable = [
-        'name', 'jsid'
+        'name', 'jsid', 'color'
     ];
 }

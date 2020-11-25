@@ -93,6 +93,7 @@ class ResponseController extends Controller
     {
         $request->validate([
             'name' => 'required|min:3',
+            'color' => 'required',
         ]);
         
         $request->merge([

@@ -19,6 +19,9 @@ Route::group(['middleware' => ['auth', 'IfAllowed']], function () {
     Route::delete('data/{data}', 'Admin\DataController@destroy')->name('data.destroy');
     Route::resource('response', 'Admin\ResponseController');
     Route::post('leads/{lead}', 'LeadsController@action')->name('lead.action');
+    Route::patch('leads/{lead}', 'LeadsController@update')->name('lead.update');
+
+
     Route::match(
         ['get', 'post'],
         'files/{files}/attach',
