@@ -33,11 +33,11 @@
                         </div>
                         @enderror
                     </div>
-                    <div class="form-group">
+                    <div class="form-group d-none">
                         <label for="guard_name">Permission Middleware</label>
-                        <input type="text" name="guard_name" id="guard_name"
+                        <input type="text" name="guard_name" id="guard_name" hidden
                             class="form-control @error('guard_name') is-invalid @enderror"
-                            placeholder="Enter Permission Middleware Name" value="{{old('guard_name')}}">
+                            placeholder="Enter Permission Middleware Name" value="{{old('guard_name') ?? 'web'}}">
                         @error('guard_name')
                         <div class="invalid-feedback">
                             <strong>{{$message}}</strong>

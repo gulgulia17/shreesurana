@@ -17,6 +17,7 @@ class CreateFilesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('file');
+            $table->unsignedBigInteger('companies_id');
             $table->boolean('extracted')->default(0);
             $table->longText('description')->nullable();
             $table->timestamps();

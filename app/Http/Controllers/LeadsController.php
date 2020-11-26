@@ -6,6 +6,7 @@ use App\Models\Lead;
 use Illuminate\Http\Request;
 use App\DataTables\LeadsDataTable;
 use App\DataTables\PendingLeadDataTable;
+use App\Models\Data;
 use Illuminate\Support\Facades\Validator;
 
 class LeadsController extends Controller
@@ -15,21 +16,23 @@ class LeadsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(LeadsDataTable $dataTable)
+    public function index(LeadsDataTable $dataTable, Request $request, Data $model)
     {
         return $dataTable->render('pages.leads.index');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Data $lead)
     {
         $request->merge([
-            'data_id' => $id,
+            'data_id' => $lead->id,
+            'company_id' => $lead->companies->id,
             'user_id' => auth()->id(),
         ]);
 
         $validation = Validator::make($request->all(), [
             'data_id' => 'exists:data,id',
             'user_id' => 'exists:users,id',
+            'company_id' => 'exists:companies,id',
             'closed' => 'sometimes',
         ]);
 
@@ -38,7 +41,6 @@ class LeadsController extends Controller
         }
 
         $lead = $this->previoudLead($request->data_id, $request->user_id);
-
         if (!$lead) {
             $lead = Lead::create($validation->getData());
         }
@@ -48,26 +50,23 @@ class LeadsController extends Controller
         return response(['success' => true, 'data' => $lead]);
     }
 
-    public function pending(PendingLeadDataTable $dataTable,Lead $model)
+    public function pending(PendingLeadDataTable $dataTable, Lead $model)
     {
         return $dataTable->render('pages.leads.pending');
-        // $pending = $request->session()->get('leads') ? $request->session()->get('leads')->load('data') : [];
-        // if (!$pending) {
-        //     $pending = $this->getPending();
-        // }
-        // return view('pages.leads.pending', ['leads' => $pending]);
     }
 
-    public function action(Request $request, $lead)
+    public function action(Request $request, Data $lead)
     {
         $request->merge([
-            'data_id' => $lead,
+            'data_id' => $lead->id,
+            'company_id' => $lead->companies->id,
             'user_id' => auth()->id(),
         ]);
 
         $validated = $request->validate([
             'data_id' => 'exists:data,id',
             'user_id' => 'exists:users,id',
+            'company_id' => 'exists:companies,id',
             'later' => 'sometimes',
             'closed' => 'sometimes',
             'response_id' => 'required|exists:responses,id',
@@ -79,7 +78,6 @@ class LeadsController extends Controller
         }
 
         $leadPrevios = $this->previoudLead($request->data_id, $request->user_id);
-
         if ($leadPrevios) {
             $leadPrevios->update(['later' => null]);
         }

@@ -5,18 +5,31 @@
             <div class="card">
                 <div class="card-header">
                     <ul class="nav nav-tabs align-items-end card-header-tabs w-100">
-                        {{-- @can('files.index') --}}
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{!!  route('files.index') !!}">
-                                <i class="fa fa-list mr-2"></i>{{ __('Files List') }}</a>
-                        </li>
-                        {{-- @endcan --}}
-                        {{-- @can('files.create') --}}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{!!  route('files.create') !!}">
-                                <i class="fa fa-plus mr-2"></i>{{ __('Create') }}</a>
-                        </li>
-                        {{-- @endcan --}}
+                        @can('files.index')
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{!!  route('files.index') !!}">
+                                    <i class="fa fa-list mr-2"></i>{{ __('Files List') }}
+                                </a>
+                            </li>
+                        @endcan
+                        @can('files.create')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{!!  route('files.create') !!}">
+                                    <i class="fa fa-plus mr-2"></i>{{ __('Create') }}
+                                </a>
+                            </li>
+                        @endcan
+                        <div class="ml-auto d-inline-flex">
+                            <li class="nav-item">
+                                <select name="company_id" class="form-control nav-link active" id="company-search"
+                                    data-column="3">
+                                    <option value="">Please select a company</option>
+                                    @foreach (\App\Models\Company::all() as $companies)
+                                        <option value="{{ $companies->id }}">{{ $companies->name }}</option>
+                                    @endforeach
+                                </select>
+                            </li>
+                        </div>
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
@@ -73,4 +86,12 @@
 @endsection
 @section('script')
     {{ $dataTable->scripts() }}
+    <script>
+        $('#company-search').change(function(e) {
+            e.preventDefault();
+            window.LaravelDataTables["files-table"].column($(this).data('column'))
+                .search($(this).val()).draw();
+        });
+
+    </script>
 @endsection

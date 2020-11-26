@@ -39,6 +39,18 @@
                 </li>
                 @endcan
 
+                @can('company.index')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('company.index') ? 'active' : null }}"
+                        href="{{ route('company.index') }}">
+                        <i class="far fa-building nav-icon"></i>
+                        <p>
+                            Company
+                        </p>
+                    </a>
+                </li>
+                @endcan
+
                 @can('response.index')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('response.index') ? 'active' : null }}"

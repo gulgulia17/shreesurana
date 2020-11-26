@@ -10,12 +10,17 @@ class File extends Model
 {
     use SoftDeletes;
     protected $fillable = [
-        "name", "description", "file","extracted"
+        "name", "description", "file", "extracted", "companies_id"
     ];
 
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function companies()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function data()

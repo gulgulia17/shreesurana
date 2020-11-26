@@ -21,6 +21,17 @@
                                 <i class="fa fa-list mr-2"></i>{{ __('Leads List') }}
                             </a>
                         </li>
+                        <div class="ml-auto d-inline-flex">
+                            <li class="nav-item">
+                                <select name="company_id" class="form-control nav-link active" id="company-search"
+                                    data-column="3">
+                                    <option value="">Please select a company</option>
+                                    @foreach (\App\Models\Company::all() as $companies)
+                                        <option value="{{ $companies->id }}">{{ $companies->name }}</option>
+                                    @endforeach
+                                </select>
+                            </li>
+                        </div>
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
@@ -34,9 +45,12 @@
 @endsection
 @section('script')
     {{ $dataTable->scripts() }}
-
     <script>
-        
+        $('#company-search').change(function(e) {
+            e.preventDefault();
+            window.LaravelDataTables["leads-table"].column($(this).data('column'))
+                .search($(this).val()).draw();
+        });
 
     </script>
 @endsection

@@ -22,6 +22,15 @@ class PendingLeadDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->filterColumn('companies.id', function ($query, $keyword) {
+                $query->where('company_id', $keyword);
+            })
+            ->orderColumn('companies.id', function ($query, $order) {
+                $query->join('companies as company', 'company.id', '=', 'leads.company_id')
+                    ->orderBy('company.name', $order)
+                    ->select('leads.*')
+                    ->with('company');
+            })
             ->addColumn('action', function ($lead) {
                 return view('pages.leads.action', [
                     'data' => $lead->data,
@@ -46,7 +55,7 @@ class PendingLeadDataTable extends DataTable
      */
     public function query(Lead $model)
     {
-        return $model->with('response', 'data')->where('closed', 0)
+        return $model->with('response', 'data', 'company')->where('closed', 0)
             ->where('later', '<', Carbon::now()->format('Y-m-d H:i:s'))
             ->newQuery();
     }
@@ -82,6 +91,9 @@ class PendingLeadDataTable extends DataTable
                 ->sortable(true),
             Column::computed('data.number', 'Number')
                 ->sortable(true),
+            Column::make('company.name', 'companies.id')
+                ->title('Company Name')
+                ->addClass('w-25'),
             Column::computed('response.name', 'Previos Response')
                 ->sortable(true),
             Column::make('remark'),

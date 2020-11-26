@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth', 'IfAllowed']], function () {
     Route::post('leads/{lead}', 'LeadsController@action')->name('lead.action');
     Route::patch('leads/{lead}', 'LeadsController@update')->name('lead.update');
 
+    Route::resource('company', 'Admin\CompanyController')->except(['show']);;
 
     Route::match(
         ['get', 'post'],

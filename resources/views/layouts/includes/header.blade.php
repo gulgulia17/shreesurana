@@ -3,11 +3,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    @if (Helper::goBack())
+                    {{-- @if (Helper::goBack())
                         <a href="{{ Helper::goBack() }}" class="btn btn-default">
                             <i class="fa fa-arrow-left" aria-hidden="true"></i>
                         </a>
-                    @endif
+                    @endif --}}
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong>{{ session('success') }}</strong>

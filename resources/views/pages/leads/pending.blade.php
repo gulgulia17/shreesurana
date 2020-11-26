@@ -21,32 +21,20 @@
                                 <i class="fa fa-list mr-2"></i>{{ __('Pending Leads List') }}
                             </a>
                         </li>
+                        <div class="ml-auto d-inline-flex">
+                            <li class="nav-item">
+                                <select name="company_id" class="form-control nav-link active" id="company-search"
+                                    data-column="3">
+                                    <option value="">Please select a company</option>
+                                    @foreach (\App\Models\Company::all() as $companies)
+                                        <option value="{{ $companies->id }}">{{ $companies->name }}</option>
+                                    @endforeach
+                                </select>
+                            </li>
+                        </div>
                     </ul>
                 </div>
                 <div class="card-body table-responsive">
-                    {{-- <table class="table" id="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Number</th>
-                                <th>Previous Response</th>
-                                <th>Remark</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($leads ?? [] as $lead)
-                                <tr>
-                                    <td>{{ $lead->data->name }}</td>
-                                    <td>{{ $lead->data->number }}</td>
-                                    <td>{{ $lead->response ? $lead->response->name : 'Not Available' }}</td>
-                                    <td><span class="bg-info px-3 py-2 rounded">{{ $lead->remark }}</span></td>
-                                    <td>@include('pages.leads.action',['data'=>$lead->data,'responses' =>
-                                        \App\Models\Response::all()])</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table> --}}
                     {{ $dataTable->table() }}
 
                 </div>
@@ -55,6 +43,13 @@
     </div>
 @endsection
 @section('script')
-{{ $dataTable->scripts() }}
+    {{ $dataTable->scripts() }}
+    <script>
+        $('#company-search').change(function(e) {
+            e.preventDefault();
+            window.LaravelDataTables["pendinglead-table"].column($(this).data('column'))
+                .search($(this).val()).draw();
+        });
 
+    </script>
 @endsection

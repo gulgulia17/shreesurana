@@ -5,11 +5,14 @@ namespace App\DataTables;
 use App\Models\Data;
 use App\Models\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+
+use function GuzzleHttp\Promise\each;
 
 class LeadsDataTable extends DataTable
 {
@@ -21,10 +24,20 @@ class LeadsDataTable extends DataTable
      */
     public function dataTable($query)
     {
+        $response = Response::all();
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', function (Data $data) {
-                return view('pages.leads.action', ['data' => $data, 'responses' => Response::all()]);
+            ->filterColumn('companies.id', function ($query, $keyword) {
+                $query->where('company_id', $keyword);
+            })
+            ->orderColumn('companies.id', function ($query, $order) {
+                $query->join('companies as company', 'company.id', '=', 'data.company_id')
+                    ->orderBy('company.name', $order)
+                    ->select('data.*')
+                    ->with('companies');
+            })
+            ->addColumn('action', function (Data $data) use ($response) {
+                return view('pages.leads.action', ['data' => $data, 'responses' => $response]);
             });
     }
 
@@ -37,8 +50,8 @@ class LeadsDataTable extends DataTable
     public function query(Data $model)
     {
         return $model->whereDoesntHave('lead')->whereHas('users', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->newQuery();
+            $query->where('user_id', auth()->id());
+        })->with('companies')->newQuery();
     }
 
     /**
@@ -71,6 +84,9 @@ class LeadsDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('number'),
+            Column::make('companies.name', 'companies.id')
+                ->title('Company Name')
+                ->addClass('w-25'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

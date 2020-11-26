@@ -18,15 +18,6 @@ class FilesController extends Controller
      */
     public function index(FilesDataTable $dataTable)
     {
-        // $faker = Faker::create();
-        // foreach (range(1, 5000) as $index) {
-        //     \App\Models\Data::create([
-        //         'file_id'=>3,
-        //         'name' => $faker->name,
-        //         'number' => $faker->PhoneNumber,
-        //     ]);
-        // }
-        // exit;
         return $dataTable->render('admin.filemanager.index');
     }
     /**
@@ -34,9 +25,12 @@ class FilesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(File $file)
     {
-        return view('admin.filemanager.create');
+        return view('admin.filemanager.create', [
+            'file' => $file,
+            'companies' => \App\Models\Company::orderBy('name', 'ASC')->get(),
+        ]);
     }
 
     /**
@@ -57,7 +51,7 @@ class FilesController extends Controller
     public function import(File $files)
     {
         set_time_limit(600);
-        $import = new DataImport($files->id);
+        $import = new DataImport($files);
         $import->import($files->file);
 
         $fails = [];
@@ -124,9 +118,12 @@ class FilesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(File $files)
+    public function edit(File $file)
     {
-        //
+        return view('admin.filemanager.edit', [
+            'file' => $file,
+            'companies' => \App\Models\Company::orderBy('name', 'ASC')->get(),
+        ]);
     }
 
     /**
@@ -136,9 +133,16 @@ class FilesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, File $file)
     {
-        //
+        $validated = $request->validate([
+            "name" => 'required|string|min:5',
+            "description" => 'sometimes',
+            "companies_id" => "required|exists:companies,id",
+        ]);
+
+        $file->update($validated);
+        return redirect(route('files.index'))->with('success', 'Updated Successfully');
     }
 
     public function validateRequest($request)
@@ -148,6 +152,7 @@ class FilesController extends Controller
             'description' => 'sometimes',
             'extracted' => 'sometimes',
             'file' => 'required|file|max:10000',
+            "companies_id" => "required|exists:companies,id",
         ]);
 
         $data['extracted'] = $data['extracted'] ?? 0;

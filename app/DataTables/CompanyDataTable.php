@@ -2,20 +2,15 @@
 
 namespace App\DataTables;
 
-use App\Models\Data;
+use App\Models\Company;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class DataDataTable extends DataTable
+class CompanyDataTable extends DataTable
 {
-    public $file;
-    public function __construct($file)
-    {
-        $this->file = $file;
-    }
     /**
      * Build DataTable class.
      *
@@ -26,20 +21,18 @@ class DataDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', 'admin.data.action');
+            ->addColumn('action', 'admin.company.action');
     }
 
     /**
      * Get query source of dataTable.
      *
+     * @param \App\Models\Company $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Data $model)
+    public function query(Company $model)
     {
-        $file = $this->file;
-        return $model->whereHas('files', function ($query) use ($file) {
-            $query->where('id', $file);
-        })->newQuery();
+        return $model->newQuery();
     }
 
     /**
@@ -50,14 +43,14 @@ class DataDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            ->parameters(['initComplete' => 'function() {}'])
-            ->setTableId('data-table')
+            ->setTableId('company-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom("<'row'<'col-md-6'B><'col-md-6'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'l><'col-md-6'p>>")
             ->orderBy(0, 'asc')
             ->buttons(
-                auth()->user()->type == 'Admin' ? Button::make('excel') : Button::make('reload'),
+                Button::make('excel'),
+                Button::make('reload')
             );
     }
 
@@ -69,9 +62,10 @@ class DataDataTable extends DataTable
     protected function getColumns()
     {
         return [
+            Column::make('id'),
             Column::make('name'),
             Column::make('number'),
-            Column::make('updated_at'),
+            Column::make('address'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -87,6 +81,6 @@ class DataDataTable extends DataTable
      */
     protected function filename()
     {
-        return 'Data_' . date('YmdHis');
+        return 'Company_' . date('YmdHis');
     }
 }

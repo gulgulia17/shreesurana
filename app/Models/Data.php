@@ -22,6 +22,11 @@ class Data extends Model
         return $this->belongsTo(File::class, 'file_id');
     }
 
+    public function companies()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
     public function lead()
     {
         return $this->hasOne(Lead::class);

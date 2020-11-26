@@ -17,9 +17,10 @@ class DataImport implements ToModel, WithValidation, WithHeadingRow, SkipsOnFail
 
     public $file_id;
 
-    public function  __construct($file_id)
+    public function  __construct($files)
     {
-        $this->file_id = $file_id;
+        $this->file_id = $files->id;
+        $this->company_id = $files->companies_id;
     }
 
     public function model(array $row)
@@ -28,6 +29,7 @@ class DataImport implements ToModel, WithValidation, WithHeadingRow, SkipsOnFail
             'name' => $row['name'],
             'number' => $row['number'],
             'file_id' => $this->file_id,
+            'company_id' => $this->company_id,
         ]);
     }
 

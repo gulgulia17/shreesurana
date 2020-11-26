@@ -18,6 +18,7 @@ class CreateLeadsTable extends Migration
             $table->unsignedBigInteger('response_id')->nullable();
             $table->unsignedBigInteger('data_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('company_id');
             $table->boolean('closed')->default(0);
             $table->dateTime('later')->nullable();
             $table->text('remark')->nullable(); 

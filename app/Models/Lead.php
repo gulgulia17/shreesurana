@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Lead extends Model
 {
     protected $fillable = [
-        'response_id', 'data_id', 'later', 'user_id', 'remark', 'closed'
+        'response_id', 'data_id', 'later', 'user_id', 'remark', 'closed', 'company_id'
     ];
     protected $appends = ['is_allowed'];
 
@@ -25,6 +25,11 @@ class Lead extends Model
     public function data()
     {
         return $this->belongsTo(Data::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function user()

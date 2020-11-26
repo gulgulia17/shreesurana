@@ -20,10 +20,19 @@ class FilesDataTable extends DataTable
     public function dataTable($query)
     {
         return datatables()
-        ->eloquent($query)
-        ->addColumn('action', function(File $file){
-            return view('admin.filemanager.action',compact('file'));
-        });
+            ->eloquent($query)
+            ->filterColumn('companies.id', function ($query, $keyword) {
+                $query->where('companies_id', $keyword);
+            })
+            ->orderColumn('companies.id', function ($query, $order) {
+                $query->join('companies as company', 'company.id', '=', 'files.companies_id')
+                    ->orderBy('company.name', $order)
+                    ->select('files.*')
+                    ->with('companies');
+            })
+            ->addColumn('action', function (File $file) {
+                return view('admin.filemanager.action', compact('file'));
+            });
     }
 
     /**
@@ -34,7 +43,7 @@ class FilesDataTable extends DataTable
      */
     public function query(File $model)
     {
-        return $model->newQuery();
+        return $model->with('companies')->newQuery();
     }
 
     /**
@@ -45,8 +54,8 @@ class FilesDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-                    ->parameters([
-                        'initComplete' => 'function() { 
+            ->parameters([
+                'initComplete' => 'function() { 
                             $(".file-attach").click(function (e) { 
                                 e.preventDefault();
                                 let url = $(this).attr("href");
@@ -70,16 +79,16 @@ class FilesDataTable extends DataTable
                                 });
                            });
                          }',
-                    ])
-                    ->setTableId('files-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->dom("<'row'<'col-md-6'B><'col-md-6'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'l><'col-md-6'p>>")
-                    ->orderBy(0)
-                    ->buttons(
-                        Button::make('excel'),
-                        Button::make('reload')
-                    );
+            ])
+            ->setTableId('files-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->dom("<'row'<'col-md-6'B><'col-md-6'f>><'row'<'col-md-12'tr>><'row'<'col-md-6'l><'col-md-6'p>>")
+            ->orderBy(0)
+            ->buttons(
+                Button::make('excel'),
+                Button::make('reload')
+            );
     }
 
     /**
@@ -93,11 +102,13 @@ class FilesDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('description'),
+            Column::make('companies.name', 'companies.id')
+                ->title('Company Name'),
             Column::computed('action')
-                  ->exportable(true)
-                  ->printable(true)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->exportable(true)
+                ->printable(true)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 
