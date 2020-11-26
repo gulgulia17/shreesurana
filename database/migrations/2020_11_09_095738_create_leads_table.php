@@ -20,7 +20,7 @@ class CreateLeadsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->boolean('closed')->default(0);
             $table->dateTime('later')->nullable();
-            $table->text('remark')->nullable();
+            $table->text('remark')->nullable(); 
             $table->timestamps();
         });
     }
