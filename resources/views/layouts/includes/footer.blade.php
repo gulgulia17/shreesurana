@@ -2,6 +2,6 @@
       <strong>Copyright &copy; <a href="{{ env('APP_URL') }}">{{ config('app.name') }}</a>.</strong>
       All rights reserved.
       <div class="float-right d-none d-sm-inline-block">
-          <b>Version</b> 1.0.1
+          <b>Developed</b> <a href="mailto:gulgulia17@gmail.com"><strong>Mudit Gulgulia</strong></a>
       </div>
   </footer>
