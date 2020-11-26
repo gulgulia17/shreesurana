@@ -56,6 +56,7 @@ class FilesController extends Controller
 
     public function import(File $files)
     {
+        set_time_limit(600);
         $import = new DataImport($files->id);
         $import->import($files->file);
 
