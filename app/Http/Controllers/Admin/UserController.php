@@ -90,15 +90,17 @@ class UserController extends Controller
             'number' => ['required', 'string', 'max:10', 'unique:users,number'],
         ]);
 
+        $role = Role::findById($request->role);
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'type' => $data['role'],
+            'type' => 'User',
             'username' => $data['username'] ?? '',
             'password' => Hash::make($data['password']),
             'number' => $data['number'],
         ]);
-        $user->assignRole(Role::findById($request->role));
+        $user->assignRole($role);
         return redirect(route('user.index'))->with('success', 'User added successfully');
     }
 

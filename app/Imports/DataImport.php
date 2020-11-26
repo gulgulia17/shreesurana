@@ -34,8 +34,8 @@ class DataImport implements ToModel, WithValidation, WithHeadingRow, SkipsOnFail
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3',
-            'number' => 'required|numeric|unique:data,number',
+            'name' => 'required',
+            'number' => 'required|unique:data,number',
             'file_id' => '',
         ];
     }

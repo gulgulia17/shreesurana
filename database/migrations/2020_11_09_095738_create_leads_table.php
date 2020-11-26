@@ -15,9 +15,9 @@ class CreateLeadsTable extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('response_id')->nullable();
-            $table->foreignId('data_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->unsignedBigInteger('response_id')->nullable();
+            $table->unsignedBigInteger('data_id');
+            $table->unsignedBigInteger('user_id');
             $table->boolean('closed')->default(0);
             $table->dateTime('later')->nullable();
             $table->text('remark')->nullable();
